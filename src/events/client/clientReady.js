@@ -25,31 +25,33 @@ module.exports = async (client) => {
         embeds: [embed],
     });
 
+
     setInterval(async function () {
         const promises = [
-            client.shard.fetchClientValues('guilds.cache.size'),
+          client.shard.fetchClientValues('guilds.cache.size'),
         ];
         return Promise.all(promises)
-            .then(results => {
-                const totalGuilds = results[0].reduce((acc, guildCount) => acc + guildCount, 0);
-                let statuttext;
-                if (process.env.DISCORD_STATUS) {
-                    statuttext = process.env.DISCORD_STATUS.split(', ');
-                } else {
-                    statuttext = [
-                        `・❓┆/help`,
-                        `・💻┆${totalGuilds} servers`,
-                        `・📨┆discord.me/corwindev`,
-                        `・💻┆discord.gg/uoaio`,
-                        `・🎉┆400+ commands`,
-                        `・🏷️┆Version ${require(`${process.cwd()}/package.json`).version}`
-                    ];
-                }
-                const randomText = statuttext[Math.floor(Math.random() * statuttext.length)];
-                client.user.setActivity('activity', { type: Discord.ActivityType.Streaming });
-                client.user.setPresence({ activities: [{ name: randomText }], status: 'online' });
-            })
-    }, 50000)
+          .then(results => {
+            const totalGuilds = results[0].reduce((acc, guildCount) => acc + guildCount, 0);
+            let statuttext;
+            const activityType = ['Watching', 'Listening to'][Math.floor(Math.random() * 2)];
+            if (activityType === 'Listening to') {
+              statuttext = `・👥┆${client.users.cache.size} users`;
+            } else {
+              statuttext = `・💻┆${totalGuilds} servers・📊┆${client.channels.cache.size} channels`;
+            }
+            const status = ['online', 'idle', 'dnd'][Math.floor(Math.random() * 3)];
+            client.user.setActivity(statuttext, { type: activityType });
+            client.user.setPresence({ status });
+          })
+      }, 10000);
+      
+      setInterval(async function () {
+        client.user.setPresence({
+          status: ['online', 'idle', 'dnd'][Math.floor(Math.random() * 3)]
+        });
+      }, 5000);
+      
 
     client.player.init(client.user.id);
   // Check if is up to date
