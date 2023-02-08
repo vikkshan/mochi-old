@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const chalk = require('chalk');
-const { random } = require('mathjs');
 
 module.exports = async (client) => {
     const startLogs = new Discord.WebhookClient({
@@ -63,8 +62,6 @@ require("axios").get('https://api.github.com/repos/CorwinDev/Discord-Bot/release
 }).catch(err => {
   console.log(chalk.red.bgYellow(`Failed to check if bot is up to date!`));
 });
-
-  if(!client.guilds.cache.get("1010953438684778586") && !client.guilds.cache.get("1015297785551130654")) console.log(chalk.red.bgWhite.bold("\n\nInvite your bot in emotes servers to work emotes\n\n") + "1. https://discord.gg/hpwuhE2vVE\n2. https://discord.gg/M7DWTrYEWZ\n\n")
 
 }
 
