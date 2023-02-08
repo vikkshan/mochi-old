@@ -26,30 +26,35 @@ module.exports = async (client) => {
 
 
     setInterval(async function () {
-        const promises = [
-          client.shard.fetchClientValues('guilds.cache.size'),
+      const promises = [
+        client.shard.fetchClientValues('guilds.cache.size'),
+      ];
+      return Promise.all(promises)
+        .then(results => {
+          const totalGuilds = results[0].reduce((acc, guildCount) => acc + guildCount, 0);
+          
+          const activities = [
+            `in ${totalGuilds} servers!`,
+            `with ${client.users.cache.size} users!`,
+            `in ${client.channels.cache.size} channels!`
         ];
-        return Promise.all(promises)
-          .then(results => {
-            const totalGuilds = results[0].reduce((acc, guildCount) => acc + guildCount, 0);
-            let statuttext;
-            const activityType = ['Watching', 'Listening to'][Math.floor(Math.random() * 2)];
-            if (activityType === 'Listening to') {
-              statuttext = `・👥┆${client.users.cache.size} users`;
-            } else {
-              statuttext = `・💻┆${totalGuilds} servers・📊┆${client.channels.cache.size} channels`;
-            }
-            const status = ['online', 'idle', 'dnd'][Math.floor(Math.random() * 3)];
-            client.user.setActivity(statuttext, { type: activityType });
-            client.user.setPresence({ status });
-          })
-      }, 10000);
-      
-      setInterval(async function () {
-        client.user.setPresence({
-          status: ['online', 'idle', 'dnd'][Math.floor(Math.random() * 3)]
-        });
-      }, 5000);
+        const statuses = ["dnd", "idle", "online"];
+        let activityIndex = 0;
+    
+        setInterval(() => {
+          const activity = activities[Math.floor(Math.random() * activities.length)];
+          const status = statuses[activityIndex];
+          client.user.setPresence({
+              status: status,
+              activities: [{ name: `${activity}`}]
+          });
+    
+          activityIndex = (activityIndex + 1) % statuses.length;
+        }, 5000);
+      });
+    }, 5000);
+    
+
       
 
     client.player.init(client.user.id);
