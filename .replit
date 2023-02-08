@@ -1,3 +1,0 @@
-hidden = [".config"]
-run = "npm run start"
-entryPoint = "src/index.js"
